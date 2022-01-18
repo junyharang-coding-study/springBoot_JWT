@@ -4,6 +4,7 @@ import com.junyharang.jwtstudy.filter.JunyHarangFilter1;
 import com.junyharang.jwtstudy.filter.JunyHarangFilter3;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,8 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // BasicAuthenticationFilter가 동작하기 전에 내가 만든 필터를 동작시켜 준다.
-        http.addFilterBefore(new JunyHarangFilter3(), BasicAuthenticationFilter.class);
+        // SecurityContextPersistenceFilter가 동작하기 전에 내가 만든 필터를 동작 시켜 준다.
+        http.addFilterBefore(new JunyHarangFilter3(), SecurityContextPersistenceFilter.class);
 
         http.csrf().disable();
         // JWT 사용을 위해 Session 방식 비 활성화(Stateless 서버로 만들겠다는 의미)
