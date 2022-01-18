@@ -1,10 +1,17 @@
 package com.junyharang.jwtstudy.config;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+@Configuration @EnableWebSecurity @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final CorsFilter corsFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -12,6 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // JWT 사용을 위해 Session 방식 비활성화(Stateless 서버로 만들겠다는 의미)
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                // 모든 요청은 해당 Filter를 거치게 함으로 Cors Error를 벗어날 수 있다.(Cross Origin 요청도 허용된다.)
+                // Controller에 달아주는 @CrossOrigin은 인증이 없을 때 사용하는 것이고,
+                // 인증이 있을때는 아래와 같이 Security Filter에 등록 인증을 만들어주어야 한다.
+                .addFilter(corsFilter)
                 .formLogin().disable()  // fromLogin 방식을 사용하지 않는다.
                 .httpBasic().disable()  // 기본적인 Login 방식을 사용하지 않는다.
 
