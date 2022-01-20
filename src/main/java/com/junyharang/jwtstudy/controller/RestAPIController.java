@@ -29,7 +29,19 @@ import org.springframework.web.bind.annotation.RestController;
         member.setPassword(bCryptPasswordEncoder.encode(member.getPassword()));
         member.setRolse("ROLE_USER");
         memberRepository.save(member);
-        return "회원가입완료";
+        return "회원 가입 완료";
     } // join(@RequestBody Member member) 끝
+
+    @GetMapping("/api/v1/member") public String member() {  // user 이상 권한 접근 가능
+        return "member";
+    } // member() 끝
+
+    @GetMapping("/api/v1/manager") public String manager() {  // manager, admin 권한만 접근 가능
+        return "manager";
+    } // manager() 끝
+
+    @GetMapping("/api/v1/admin") public String admin() {    // admin 권한만 접근 가능
+        return "admin";
+    } // admin() 끝
 
 } // class 끝

@@ -1,6 +1,7 @@
 package com.junyharang.jwtstudy.config;
 
 import com.junyharang.jwtstudy.config.jwt.JwtAuthenticationFilter;
+import com.junyharang.jwtstudy.config.jwt.JwtAuthorizationFilter;
 import com.junyharang.jwtstudy.filter.JunyHarangFilter3;
 import com.junyharang.jwtstudy.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.filter.CorsFilter;
 
@@ -48,8 +48,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // 이 방식은 Header 값이 암호화 할 수 없는 단점이 있어 중간자 공격 등에 탈취가 될 수 있기 때문에 보안상 위험하다.
             // httpBasic을 쓰면서 위 단점을 보완하기 위해서 https를 사용하는 것이다.
             .httpBasic().disable()  // 기본적인 Login 방식을 사용하지 않는다.
-                // AutenticationManager를 매개변수로 던져줘야 하는데, AutenticationManager를 통해 로그인을 진행하기 때문
+
+            // AutenticationManager를 매개변수로 던져줘야 하는데, AutenticationManager를 통해 로그인을 진행하기 때문
             .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+
+            .addFilter(new JwtAuthorizationFilter(authenticationManager(), memberRepository))
 
             // JWT를 사용하는 것은 header Authorization 영역에 Token을 넣어서 보내는 방식이다.
             // Bearer 방식은 header에 ID, PW를 함께 전달하는 방식이 아니라, Token만 넣어서 보내는 방식이다.

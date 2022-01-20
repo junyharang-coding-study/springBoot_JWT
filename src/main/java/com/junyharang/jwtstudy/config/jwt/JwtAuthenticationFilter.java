@@ -1,5 +1,7 @@
 package com.junyharang.jwtstudy.config.jwt;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.junyharang.jwtstudy.auth.PrincipalDetails;
 import com.junyharang.jwtstudy.model.Member;
@@ -15,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 
 // 스프링 시큐리티에 UsernamePasswordAuthenticationFilter가 있다.
 // /login이 요청 오면 username, password를 전송하면 (Post로)
@@ -82,7 +85,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     // successfulAuthentication()에서 JWT를 만든 뒤 요청 이용자에게 JWT를 응답 처리 해 주면 된다.
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+
+        // 1000 / 1로 계산을 하기 때문에 1000이 1초이다.
+        int jwtExpireTime = 60000 * 10; // 10분
+
         System.out.println("successfulAuthentication()가 실행 되었습니다! 인증이 정상 처리 되었나 보네요🤭");
-        super.successfulAuthentication(request, response, chain, authResult);
+
+        // 이 자료를 통해 JWT를 만든다.
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        // HMAC SHA512 방식의 암호 알고리즘 사용
+        String jwtToken = JWT.create()    // JWT 만들기
+                .withSubject("JunyHarangToken")
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtExpireTime))
+                .withClaim("id", principalDetails.getMember().getId())
+                .withClaim("username", principalDetails.getMember().getUsername())
+                .sign(Algorithm.HMAC512("JunyHarang"));
+
+        // 응답 Header Authrization에 Bearer 인증 방식에 jwtToken을 넣어 보내준다.
+        response.addHeader("Authorization", "Bearer " + jwtToken);
     } // successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) 끝
 } // class 끝
