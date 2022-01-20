@@ -1,20 +1,31 @@
 package com.junyharang.jwtstudy.config;
 
 import com.junyharang.jwtstudy.config.jwt.JwtAuthenticationFilter;
-import com.junyharang.jwtstudy.filter.JunyHarangFilter1;
 import com.junyharang.jwtstudy.filter.JunyHarangFilter3;
+import com.junyharang.jwtstudy.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration @EnableWebSecurity @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired private MemberRepository memberRepository;
+
+    @Autowired private CorsConfig corsConfig;
+
+    @Bean public BCryptPasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    } // passwordEncoder() 끝
 
     private final CorsFilter corsFilter;
 

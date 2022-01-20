@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
         System.out.println("PrincipalDetailsService의 loadUserByUsername()이 동작하였습니다!");
         Member memberEntity = memberRepository.findByUsername(username);
 
+        System.out.println("memberEntity : " + memberEntity);
+
         return new PrincipalDetails(memberEntity);
     } // loadUserByUsername(String username) 끝
 } // class 끝
